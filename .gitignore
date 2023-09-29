@@ -1,0 +1,14 @@
+.idea/
+.vscode
+__pycache__/
+*.py[co]
+log/
+output/
+pretrained_models
+scripts/
+detail-api/
+
+pretrain_model/
+lib/utils/cpp_wrappers/
+lib/utils/nearest_neighbors/
+

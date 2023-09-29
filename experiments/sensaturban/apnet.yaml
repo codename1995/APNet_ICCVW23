@@ -1,0 +1,141 @@
+CUDNN:
+  BENCHMARK: true
+  DETERMINISTIC: false
+  ENABLED: true
+GPUS: (0,1,2,3,4,5,6,7)
+OUTPUT_DIR: 'output'
+LOG_DIR: 'log'
+WORKERS: 8
+PRINT_FREQ: 500
+SAVE_WEIGHTS: True
+
+DATASET:
+  DATASET: sensaturban
+  ROOT: 'path/to/dataset'
+  TEST_SET: './data/list/sensaturban/val_list_V100.txt'
+  TRAIN_SET: './data/list/sensaturban/tra_list_V100.txt'
+  NUM_CLASSES: 13
+  NUM_POINTS: 8192
+  RANDOM_POINTS: true # sample random point as center point. Set as false for overfitting.
+  THRESHOLD_POSSIBILITY: 0.3
+  SAMPLES_TRA: 8192  # Tra set has 148 million points. 8192 samples * 8192 points = 67.1 million
+  SAMPLES_VAL: 16384  # Val set (4 block) has 28.6 million points. 4096 samples * 8192 points = 33.6 million
+MODEL:
+  NAME: apnet
+  # HRNET
+  NUM_OUTPUTS: 1
+  ALIGN_CORNERS: False
+  FUSION: KPCONV2
+  SRC_PTS: True  # whether use source points in fusion module
+  PARTIAL_CONV: False
+  IMG_BLUR: True
+  EXTRA:
+    FINAL_CONV_KERNEL: 1
+    STAGE1:
+      NUM_MODULES: 1
+      NUM_RANCHES: 1
+      BLOCK: BOTTLENECK
+      NUM_BLOCKS:
+        - 4
+      NUM_CHANNELS:
+        - 64
+      FUSE_METHOD: SUM
+    STAGE2:
+      NUM_MODULES: 1
+      NUM_BRANCHES: 2
+      BLOCK: BASIC
+      NUM_BLOCKS:
+        - 4
+        - 4
+      NUM_CHANNELS:
+        - 48
+        - 96
+      FUSE_METHOD: SUM
+    STAGE3:
+      NUM_MODULES: 4
+      NUM_BRANCHES: 3
+      BLOCK: BASIC
+      NUM_BLOCKS:
+        - 4
+        - 4
+        - 4
+      NUM_CHANNELS:
+        - 48
+        - 96
+        - 192
+      FUSE_METHOD: SUM
+    STAGE4:
+      NUM_MODULES: 3
+      NUM_BRANCHES: 4
+      BLOCK: BASIC
+      NUM_BLOCKS:
+        - 4
+        - 4
+        - 4
+        - 4
+      NUM_CHANNELS:
+        - 48
+        - 96
+        - 192
+        - 384
+      FUSE_METHOD: SUM
+  # RandLA-Net
+  K_N: 16
+  NUM_LAYERS: 4
+  SUB_SAMPLING_RATIO:
+    - 4
+    - 4
+    - 4
+    - 4
+  D_OUT:
+    - 64
+    - 128
+    - 256
+    - 512
+LOSS:
+  USE_OHEM: false
+  OHEMTHRES: 0.9
+  OHEMKEEP: 131072
+  BALANCE_WEIGHTS: [0.04, ]
+TRAIN:
+  IMAGE_SIZE:
+    - 500
+    - 500
+  BASE_SIZE: 500
+  BATCH_SIZE_PER_GPU: 4
+  SHUFFLE: true
+  BEGIN_EPOCH: 0
+  END_EPOCH: 200
+  EPOCH_ITERS: 500 # =steps in RandLA-Net
+  SAMPLES_PER_EPOCH: 8192 # tra_set5_list has 13231 samples
+  RESUME: False
+  OPTIMIZER: sgd
+  LR: 0.001
+  LR_MIN_SCALAR: 0.00001
+  WD: 0.0005
+  MOMENTUM: 0.9
+  NESTEROV: false
+  FLIP: false
+  MULTI_SCALE: false # random scale + crop
+  DOWNSAMPLERATE: 1 # downsample after random multi-scale
+  IGNORE_LABEL: 255
+  SCALE_FACTOR: 16 # To be investigated
+TEST:
+  IMAGE_SIZE:
+    - 500
+    - 500
+  BASE_SIZE: 500
+  SAMPLES_PER_EPOCH: 16384 # val_set5_list has 2757*5=13785 samples
+  BATCH_SIZE_PER_GPU: 16
+  FLIP_TEST: false
+  MULTI_SCALE: false
+TRICK:
+  POINT_ROTATION: "z"  # '', 'z' or 'arbitrarily'
+  POINT_SCALE_ANISOTROPIC: True
+  POINT_SCALE: [0.9, 1.1]
+  POINT_SYMMETRIES: [True, False, False]
+  POINT_NOISE: 0.001  # Urban3D-2021-2nd uses 0.001.
+  POINT_NOISE_MAX: 0.2
+  CITY_WISE_SUB: False
+  COLOR_DROPPING: 0.2
+  COLOR_AUTO_CONTRAST: 0.
