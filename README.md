@@ -1,6 +1,6 @@
 # APNet: Urban-level Scene Segmentation of Aerial Images and Point Clouds
 
-**[Paper (To be updated)]()**
+**[Paper (To be updated)]()** **|** **[Poster](https://amsuni-my.sharepoint.com/:b:/g/personal/w_wei2_uva_nl/Ecoj28p8T2FFmI6QRQZdhUABWclgn4lO9hRLu84Dez7tvw?e=CUbWbV)** **|** **[Slides](https://amsuni-my.sharepoint.com/:b:/g/personal/w_wei2_uva_nl/EahGmaCDG0dDs4w9vT1jRXcBhbigtEPsnnaTiJ8BvOGxNg?e=4t1cX6)**
 
 This repo is the official implementation for the ICCVW'23 paper: APNet: Urban-level Scene Segmentation of Aerial Images and Point Clouds
 
